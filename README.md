@@ -4,7 +4,7 @@
 2. 在VS Code命令行（terminal）中，clone课程仓库：
     ```
     export http_proxy=http://Clash:QOAF8Rmd@10.1.0.213:7890 && export https_proxy=http://Clash:QOAF8Rmd@10.1.0.213:7890 && export all_proxy=socks5://Clash:QOAF8Rmd@10.1.0.213:7893
-    git clone git@github.com:xuw/llm_course_public.git
+    git clone https://github.com/xuw/llm_course_public.git
     ```
 4. (更新)查看最新的课程内容信息：
     ```
