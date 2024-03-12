@@ -1,3 +1,4 @@
+# 基本操作
 
 1. 推荐使用[操作指南](https://github.com/iiisthu/ailab?tab=readme-ov-file#使用-vs-code-连接k8s远程调试)中的“使用 VS Code 连接K8S远程调试”方法先在vscode中连接集群。
 2. 在VS Code命令行（terminal）中，clone课程仓库：
