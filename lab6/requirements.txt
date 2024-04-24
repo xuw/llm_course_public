@@ -1,0 +1,10 @@
+#pandas 
+#matplotlib 
+#nltk 
+rouge
+rouge_score
+datasets
+evaluate
+#accelerate
+bitsandbytes
+
