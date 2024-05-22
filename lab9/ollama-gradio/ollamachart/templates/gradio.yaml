@@ -1,0 +1,47 @@
+{{ $gradioimage := .Values.GradioImage | default "harbor.ai.iiis.co:9443/xuw/lab9:v11" }}
+{{ $modelname := .Values.ModelName | default "llama3"}}
+
+{{ $gradiocommand := .Values.GradioCommand | default "" }}
+{{ $gradioargs := .Values.GradioArgs | default "" }}
+
+{{ $openaiurl := .Values.OpenAIUrl | default "http://openai-api:8000/v1" }}
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: gradio
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: gradio
+  template:
+    metadata:
+      labels:
+        app: gradio
+    spec:
+      containers:
+      - name: gradio
+        image: {{ $gradioimage }}
+{{- if $gradiocommand }}
+        command: {{ $gradiocommand }}
+        args: {{ $gradioargs }}
+{{- end }}
+        ports:
+        - containerPort: 7860
+        resources:
+          limits:
+            cpu: 1
+            memory: 2Gi
+            nvidia.com/gpu: 0
+        env:
+        - name: VLLM_API_KEY
+          valueFrom:
+            secretKeyRef:
+              name: vllm-secret
+              key: api-key
+        - name: VLLM_MODEL_NAME
+          value: {{ $modelname }}
+        - name: OPENAI_URL
+          value: {{ $openaiurl}}
+

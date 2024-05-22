@@ -1,0 +1,114 @@
+{{ $deploy := "openai-api" }}
+{{ $label := "openai-api" }}
+{{ $namespace := .Values.NameSpace | default "default"  }}
+{{ $containername := .Values.ContainerName | default (printf "%s" .Release.Name) }}
+{{ $containerimage := .Values.ContainerImage | default "harbor.ai.iiis.co/xuw/ollama:0138" }}
+
+{{- $limits := .Values.Limits | default (dict) }}
+{{ $limitscpu := $limits.CPU | default "1" }}
+{{ $limitsmemory := $limits.memory | default "1Gi" }}
+{{ $limitsgpu := $limits.GPU | default "0" }}
+
+{{ $nogfs := .Values.NoGFS | default false }}
+{{ $localpath := .Values.LocalPath | default "/share" }}
+
+{{ $vllmport := .Values.vllmPort | default 8000 }}
+
+{{ $command := .Values.vLLMCommand | default "" }}
+{{ $args := .Values.vLLMArgs | default "" }}
+{{ $modelname := .Values.ModelName | default "llama3"}}
+{{ $additionalargs := .Values.AdditionalArgs | default "" }}
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ $deploy }}
+  labels:
+    app: {{ $label }}
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: {{ $label }}
+  template:
+    metadata:
+      labels:
+        app: {{ $label }}
+    spec:
+      hostIPC: false
+      hostPID: false
+      hostNetwork: true
+      containers:
+      - name: {{ $containername }}
+        imagePullPolicy: IfNotPresent
+        image: {{ $containerimage }} # 可自行更改镜像和版本
+        env:
+        - name: VLLM_API_KEY
+          valueFrom:
+            secretKeyRef:
+              name: vllm-secret
+              key: api-key
+        - name: OLLAMA_HOST
+          value: 0.0.0.0:{{ $vllmport }}
+        - name: OLLAMA_MODELS
+          value: /share/ollama/models/
+{{- if $command }}
+        command: {{ $command }}
+        args: {{ $args }}
+{{- end }}
+        resources:
+          limits:
+            cpu: {{ $limitscpu }} # 最大CPU
+            memory: {{ $limitsmemory }} # 最大内存数目
+            nvidia.com/gpu: {{ $limitsgpu }} # 请求的GPU数量
+        volumeMounts:
+        - name: gfshare # 与下面volumes的名字对应
+          mountPath: /share # 本地的挂载点
+        - name: ssdshare # 与下面volumes的名字对应
+          mountPath: /ssdshare # 本地的挂载点
+        - name: dshm
+          mountPath: /dev/shm
+      volumes:
+      - name: dshm
+        emptyDir:
+          medium: Memory
+          sizeLimit: 4Gi
+{{ if not $nogfs }}
+      - name: gfshare
+        persistentVolumeClaim:
+          claimName: gfs-sata-pvc-share-{{ $namespace }}
+      - name: ssdshare
+        persistentVolumeClaim:
+          claimName: gfs-nvme-pvc-share-{{ $namespace }}
+{{ else }}
+      - name: gfshare
+        hostPath:
+          path: {{ $localpath }}
+      - name: ssdshare
+        hostPath:
+          path: {{ $localpath }}
+{{ end }}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  annotations: {}
+  labels: 
+    app: {{ $label }}
+    k8s.kuboard.cn/name: {{ $deploy }}
+  name: {{ $deploy }}
+spec: 
+  ports:
+{{ if $vllmport}}
+    - name: {{ $deploy }}-port
+      port: {{ $vllmport }}
+      protocol: TCP
+      targetPort: {{ $vllmport }}
+{{ end }}
+  selector: 
+    app: {{ $label }}
+  sessionAffinity: None
+  type: NodePort
+
+

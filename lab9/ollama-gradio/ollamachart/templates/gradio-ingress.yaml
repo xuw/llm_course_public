@@ -1,0 +1,28 @@
+{{ $ingresshost := .Values.IngressHost | default "" }}
+
+{{ if $ingresshost }}
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  annotations:
+    cert-manager.io/cluster-issuer: letsencrypt-prod
+  name: gradio-ingress
+spec:
+  ingressClassName: nginx
+  rules:
+    - host: {{ $ingresshost }}
+      http:
+        paths:
+          - backend:
+              service:
+                name: gradio-service
+                port:
+                  number: 7860
+            path: /
+            pathType: Prefix
+  tls:
+    - hosts:
+        - {{ $ingresshost }}
+      secretName: passwd-tls
+
+{{ end }}
