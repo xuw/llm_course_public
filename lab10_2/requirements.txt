@@ -1,0 +1,6 @@
+trl
+fire
+bitsandbytes
+deepspeed
+peft
+accelerate
