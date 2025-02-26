@@ -1,4 +1,4 @@
-{{ $gradioimage := .Values.GradioImage | default "harbor.ai.iiis.co:9443/xuw/lab9:v11" }}
+{{ $gradioimage := .Values.GradioImage | default "harbor.ai.iiis.co/xuw/pytorch:v1.5" }}
 {{ $modelname := .Values.ModelName | default "/ssdshare/Meta-Llama-3-8B-Instruct/"}}
 
 {{ $gradiocommand := .Values.GradioCommand | default "" }}

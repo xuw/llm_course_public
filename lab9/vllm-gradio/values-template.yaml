@@ -1,9 +1,9 @@
 ########### First thing first ###########
-NameSpace: you-forget-to-set-namespace   # 自己的namespace （同用户名）
+NameSpace: xrw22  # 自己的namespace （同用户名）
 
 ########### vLLM Configuration ###########
 # vllmPort: 8000
-ContainerImage: harbor.ai.iiis.co/xuw/vllm:latest 
+ContainerImage: harbor.ai.iiis.co/xuw/pytorch:v1.5
 
 # Using the llama-3-8B-instruct model
 #ModelName: /ssdshare/Meta-Llama-3-8B-Instruct/
