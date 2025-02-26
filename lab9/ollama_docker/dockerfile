@@ -1,5 +1,0 @@
-FROM ollama/ollama:latest
-
-ENV TZ=Asia/Shanghai \
-    DEBIAN_FRONTEND=noninteractive
-
