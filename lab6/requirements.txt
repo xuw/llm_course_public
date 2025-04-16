@@ -1,0 +1,6 @@
+rouge
+rouge_score
+datasets
+evaluate
+bitsandbytes
+
