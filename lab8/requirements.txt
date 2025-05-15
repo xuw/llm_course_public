@@ -1,0 +1,4 @@
+trl
+fire
+bitsandbytes
+deepspeed
