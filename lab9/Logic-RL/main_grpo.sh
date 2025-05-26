@@ -4,8 +4,6 @@ export WANDB_API_KEY='your wandb key'
 
 set -x
 MODEL_PATH=/ssdshare/qzh/Qwen/Qwen2.5-7B-Instruct-1M
-# MODEL_PATH=/ssdshare/qzh/Qwen2.5-3B-Instruct
-
 export VLLM_ATTENTION_BACKEND=XFORMERS
 RAY_BACKEND_LOG_LEVEL=debug python3 -m verl.trainer.main_ppo \
     algorithm.adv_estimator=grpo \
