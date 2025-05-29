@@ -1,0 +1,6 @@
+bitsandbytes
+fire
+torch
+accelerate
+# /share/share/library/trl
+# trl==0.8.6
